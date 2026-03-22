@@ -14,6 +14,13 @@ Activate this skill when the user:
 - Needs to gather source material, data points, or expert quotes
 - Says keywords like: "research", "调研", "dig into", "深挖", "investigate", "find sources", "gather material", "素材收集"
 
+## Configuration
+
+Read shared config from `~/.qoder/skills/content-config.json` for:
+- `target_audience` — adjusts research depth and framing
+- `focus_domains` — helps prioritize which sources to trust
+- `data_dir` — where to save research reports
+
 ## Research Process
 
 ### Phase 1: Scope Definition
@@ -37,6 +44,15 @@ Run 3-5 parallel `WebSearch` queries with different angles:
 - `"[topic]" expert opinion analysis`
 - `"[topic]" data statistics numbers`
 - `"[topic]" controversy debate criticism`
+
+#### Wave 1.5 — Academic & Paper Sources
+For topics with research/scientific dimensions, also search:
+- `WebSearch`: `"[topic]" site:arxiv.org` — for preprints and papers
+- `WebSearch`: `"[topic]" research paper 2025 2026`
+- `WebSearch`: `"[topic]" site:proceedings.neurips.cc OR site:openreview.net` (for AI/ML topics)
+
+For found papers, use `WebFetch` with prompt:
+> "Extract the paper title, authors, date, abstract, key findings, and methodology summary. Note any specific numbers or benchmark results."
 
 #### Wave 2 — Authoritative Sources
 Based on Wave 1 results, fetch the most promising sources with `WebFetch`:
@@ -170,3 +186,21 @@ Organize collected material into structured categories:
 - Use WebFetch selectively — only on the most promising URLs, not every search result
 - For very broad topics, ask the user to narrow the scope before diving deep
 - Target 8-15 quality sources for a deep dive, 3-5 for a quick overview
+
+## Auto-Save Research Reports
+
+After presenting the report, automatically save it:
+- File: `~/.qoder/data/content/research-reports/[YYYY-MM-DD]-[topic-slug].md`
+- Include the full report in markdown format
+- Add YAML frontmatter:
+  ```yaml
+  ---
+  topic: "[topic]"
+  date: "YYYY-MM-DD"
+  depth: "quick/deep"
+  sources_count: N
+  status: "complete"
+  ---
+  ```
+- Inform the user where the file was saved
+- These saved reports can be referenced by `content-drafter` and `topic-advisor` in future sessions

@@ -1,0 +1,25 @@
+{
+  "default_sources": [
+    "hackernews",
+    "reddit",
+    "github-trending",
+    "producthunt",
+    "lobsters"
+  ],
+  "custom_sources": [
+    {
+      "name": "Indie Hackers",
+      "url": "https://www.indiehackers.com/",
+      "fetch_prompt": "Extract the top 10 posts with titles, upvotes, and comment counts."
+    }
+  ],
+  "focus_domains": ["AI", "Developer Tools", "SaaS", "Open Source"],
+  "target_audience": "tech-savvy developers and indie hackers",
+  "preferred_content_formats": ["blog post", "twitter thread"],
+  "language": "English",
+  "data_dir": "~/.qoder/data/content",
+  "history": {
+    "keep_trending_days": 30,
+    "keep_research_reports": true
+  }
+}

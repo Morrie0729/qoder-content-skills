@@ -14,6 +14,24 @@ Activate this skill when the user:
 - Has trending data and needs content angles
 - Says keywords like: "选题", "topic ideas", "what should I write about", "content angles", "内容方向", "pick a topic"
 
+## Configuration
+
+Read shared config from `~/.qoder/skills/content-config.json` for:
+- `target_audience` — skip asking if already configured
+- `preferred_content_formats` — default platform preference
+- `focus_domains` — narrow candidate topic scope
+
+## Topic Selection History
+
+Before recommending, check past selections:
+1. Read files from `~/.qoder/data/content/topic-selections/`
+2. If a candidate topic was previously selected, flag it:
+   - **Previously selected** — show date, ask if user wants to revisit or skip
+   - **Selected but never drafted** — highlight as "unfinished business"
+3. After user confirms a topic, save the selection:
+   - File: `~/.qoder/data/content/topic-selections/[YYYY-MM-DD]-[slug].json`
+   - Format: `{"topic": "...", "angle": "...", "platform": "...", "status": "selected", "date": "..."}`
+
 ## Input Sources
 
 This skill works with two types of input:
@@ -69,11 +87,23 @@ Evaluate which platforms this topic works best for:
 - **Community** (Reddit, HN): Discussion-oriented, technical depth
 - **Visual** (YouTube, Instagram): Demos, infographics, walkthroughs
 
+### 6. SEO Signal Check
+Use `WebSearch` to assess search viability:
+- Search the candidate keyword — count total results (approximate competition level)
+- Check if page 1 is dominated by high-authority sites (hard to rank) or mixed (opportunity)
+- Look for "People also ask" style related queries — these indicate search demand and content angles
+- Rate: **SEO Viable** (searchable, not dominated) / **SEO Challenging** (high competition) / **SEO Irrelevant** (no search demand — social-first topic only)
+
 ## Process
 
 ### Step 1: Gather Candidate Topics
 - If from trending-hunter: Take top 10 cross-platform topics + top 5 per category
 - If user-specified: Use WebSearch to find 8-12 related trending subtopics
+
+### Step 1b: History Dedup
+Check `~/.qoder/data/content/topic-selections/` for past selections.
+- If a candidate was previously selected AND drafted → skip or deprioritize
+- If previously selected but NOT drafted → flag as "unfinished — revisit?"
 
 ### Step 2: Quick Filter
 Eliminate topics that are:
@@ -128,11 +158,11 @@ Create 3 ranked recommendations, each with a complete brief.
 
 ### 📊 Decision Matrix
 
-| Topic | Timeliness | Saturation | Audience Fit | Differentiation | Platform Fit | Overall |
-|-------|-----------|------------|-------------|----------------|-------------|---------|
-| Pick 1 | 5 | Low | High | Strong | Blog | ⭐⭐⭐⭐⭐ |
-| Pick 2 | 4 | Medium | High | Medium | Twitter | ⭐⭐⭐⭐ |
-| Pick 3 | 3 | Low | Medium | Strong | Blog | ⭐⭐⭐⭐ |
+| Topic | Timeliness | Saturation | Audience Fit | Differentiation | Platform Fit | SEO | Overall |
+|-------|-----------|------------|-------------|----------------|-------------|-----|---------|
+| Pick 1 | 5 | Low | High | Strong | Blog | Viable | ⭐⭐⭐⭐⭐ |
+| Pick 2 | 4 | Medium | High | Medium | Twitter | Irrelevant | ⭐⭐⭐⭐ |
+| Pick 3 | 3 | Low | Medium | Strong | Blog | Viable | ⭐⭐⭐⭐ |
 ```
 
 ## User Interaction
